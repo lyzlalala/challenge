@@ -50,8 +50,9 @@ const getListOfAgesOfUsersWith = (item) => {
             res[age] = _.get(res, age, 0) + 1;
         })
         return  _.map(_.keys(res), (age) => {
-            let ageToFreq = {}
-            ageToFreq[age] = res[age]
+            let ageToFreq = {};
+            ageToFreq.age = age;
+            ageToFreq.count = res[age];
             return ageToFreq
         });
     }
