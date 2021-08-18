@@ -21,14 +21,51 @@ const getUsers = () => {
     return mockDBCall(dataAccessMethod);
 };
 
+const getNameList = (item) => {
+    let nameList = [];
+    _.map(db.itemsOfUserByUsername, (itemList, name) => {
+        if (itemList.includes(item)) {
+            nameList.push(name)
+        }
+    })
+    return nameList
+}
+
+const getAgeList = nameList => {
+    let ageList = [];
+    for (let idx in db.usersById) {
+        const { username, age } = db.usersById[idx];
+        if (nameList.includes(username)) {
+            ageList.push(age)
+        }
+    }
+    return ageList
+}
 const getListOfAgesOfUsersWith = (item) => {
     const dataAccessMethod = () => {
-        // fill me in :)
+        const nameList = getNameList(item)
+        const ageList = getAgeList(nameList)
+        let res = {};
+        _.forEach(ageList, age => {
+            res[age] = _.get(res, age, 0) + 1;
+        })
+        return  _.map(_.keys(res), (age) => {
+            let ageToFreq = {}
+            ageToFreq[age] = res[age]
+            return ageToFreq
+        });
     }
+    return mockDBCall(dataAccessMethod);
+}
+
+const getAllItems = () => {
+    const getItemsList = _.flow([_.values, _.flatten, _.uniq]);
+    const dataAccessMethod = () => { return getItemsList(db.itemsOfUserByUsername)};
     return mockDBCall(dataAccessMethod);
 }
 
 module.exports = {
     getUsers,
-    getListOfAgesOfUsersWith
+    getListOfAgesOfUsersWith,
+    getAllItems
 };
